@@ -7,50 +7,89 @@ using System.Threading.Tasks;
 
 namespace dapperProj.Data.Repository
 {
-    internal class DbRepository
+    internal class DbRepository : IDbRepository
     {
         private readonly IDapper db = new Dapperr();
 
         public async Task CreateAsync(Person person)
         {
+            #region Insert Passports
             string query = $"INSERT INTO Passports (SerialNumber) VALUES ('{person.passport.SerialNumber}')";
 
-            await db.CreateAsync<Passport>(query, cmdType: CommandType.Text);
+            await db.CreateAsync(query);
+            #endregion
 
-
+            #region Select From Passports
             query = $"SELECT id FROM Passports WHERE SerialNumber = '{person.passport.SerialNumber}'";
 
-            var passId = db.GetAllAsync<long>(query, cmdType: CommandType.Text).Result.FirstOrDefault();
+            var passId = db.GetAllAsync<long>(query).Result.FirstOrDefault();
+            #endregion
 
-
-
+            #region Insert People
             query = $"INSERT INTO People (name, PassId) VALUES ('{person.Name}', {passId})";
 
-            await db.CreateAsync<Person>(query, cmdType: CommandType.Text);
+            await db.CreateAsync(query);
+            #endregion
         }
 
-        public Task DeleteAsync(long PersonId)
+        public async Task DeleteAsync(long personId)
         {
-            throw new System.NotImplementedException();
+            var person = Get(personId);
+
+            #region Delete People Query
+            string query = $"DELETE FROM People WHERE id = {personId}";
+
+            await db.DeleteAsync(query);
+            #endregion
+            
+            
+            #region Delete People Query
+            query = $"DELETE FROM Passports WHERE id = {person.passport.Id}";
+
+            await db.DeleteAsync(query);
+            #endregion
+
         }
 
-        public Task UpdateAsync(long PersonId, Person person)
+        public async Task UpdateAsync(long personId, Person newPerson)
         {
-            throw new System.NotImplementedException();
+            var oldPerson = Get(personId);
+
+            #region Update People
+            string query = $"UPDATE People SET " +
+                $"Name = '{newPerson.Name}' " +
+                $"WHERE id = {personId}";
+            #endregion
+
+            await db.UpdateAsync(query);
+
+            #region Update Passports
+            query = $"UPDATE Passports SET " +
+                $"SerialNumber = '{newPerson.passport.SerialNumber}' " +
+                $"WHERE Id = {oldPerson.passport.Id}";
+            #endregion
+
+            await db.UpdateAsync(query);
 
         }
 
-        public List<Person> GetAll()
+        public IEnumerable<Person> GetAll()
         {
+            #region Select Passports Query
             string query = $"SELECT * FROM Passports";
 
-            var passports = db.GetAllAsync<Passport>(query, cmdType: CommandType.Text).Result;
+            var passports = db.GetAllAsync<Passport>(query).Result;
+            #endregion
 
 
-            query = $"SELECT Id, Name, PassId FROM People";
+            #region Select People Query
+            query = $"SELECT * FROM People";
+            
+            var people = db.GetAllAsync<(long Id, string Name, int PassId)>(query).Result;
+            #endregion
 
-            var people = db.GetAllAsync<(long Id, string Name, int PassId)>(query, cmdType: CommandType.Text).Result;
 
+            #region Creating People objects
             var result = new List<Person>();
 
             foreach (var item in people)
@@ -64,13 +103,14 @@ namespace dapperProj.Data.Repository
                     passport = buff
                 });
             }
+            #endregion
 
             return result;
         }
 
-        public Person GetAsync(long PersonId)
+        public Person Get(long personId)
         {
-            return GetAll().FirstOrDefault(p => p.Id == PersonId);
+            return GetAll().FirstOrDefault(p => p.Id == personId);
         }
 
     }

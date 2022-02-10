@@ -8,10 +8,10 @@ namespace dapperProj.Data.IRepository
 {
     internal interface IDapper : IDisposable
     {
-        Task DeleteAsync<T>(string query, DynamicParameters pars = null, CommandType cmdType = CommandType.StoredProcedure);
-        Task UpdateAsync<T>(string query, DynamicParameters pars = null, CommandType cmdType = CommandType.StoredProcedure);
-        Task CreateAsync<T>(string query, DynamicParameters pars = null, CommandType cmdType = CommandType.StoredProcedure);
-        Task<T> GetAsync<T>(string query, DynamicParameters pars = null, CommandType cmdType = CommandType.StoredProcedure);
-        Task<IEnumerable<T>> GetAllAsync<T>(string query, DynamicParameters par = null, CommandType cmdType = CommandType.StoredProcedure);
+        Task<int> DeleteAsync(string query, DynamicParameters pars = null, CommandType cmdType = CommandType.Text);
+        Task<int> UpdateAsync(string query, DynamicParameters pars = null, CommandType cmdType = CommandType.Text);
+        Task<int> CreateAsync(string query, DynamicParameters pars = null, CommandType cmdType = CommandType.Text);
+        Task<T> GetAsync<T>(string query, DynamicParameters pars = null, CommandType cmdType = CommandType.Text);
+        Task<IEnumerable<T>> GetAllAsync<T>(string query, DynamicParameters par = null, CommandType cmdType = CommandType.Text);
     }
 }

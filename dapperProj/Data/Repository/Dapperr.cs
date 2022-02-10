@@ -23,27 +23,27 @@ namespace dapperProj.Data.Repository
             throw new NotImplementedException();
         }
 
-        public virtual async Task CreateAsync<T>(string query, DynamicParameters pars = null, CommandType cmdType = CommandType.StoredProcedure)
+        public async Task<int> CreateAsync(string query, DynamicParameters pars = null, CommandType cmdType = CommandType.Text)
         {
-            await db.QueryAsync<T>(query, param: pars, commandType: cmdType);
+            return await db.ExecuteAsync(query, param: pars, commandType: cmdType);
         }
 
-        public async Task UpdateAsync<T>(string query, DynamicParameters pars = null, CommandType cmdType = CommandType.StoredProcedure)
+        public async Task<int> UpdateAsync(string query, DynamicParameters pars = null, CommandType cmdType = CommandType.Text)
         {
-            await db.QueryAsync<T>(query, param: pars, commandType: cmdType);
+            return await db.ExecuteAsync(query, param: pars, commandType: cmdType);
         }
 
-        public async Task DeleteAsync<T>(string query, DynamicParameters pars = null, CommandType cmdType = CommandType.StoredProcedure)
+        public async Task<int> DeleteAsync(string query, DynamicParameters pars = null, CommandType cmdType = CommandType.Text)
         {
-            await db.QueryAsync<T>(query, param: pars, commandType: cmdType);
+            return await db.ExecuteAsync(query, param: pars, commandType: cmdType);
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync<T>(string query, DynamicParameters pars = null, CommandType cmdType = CommandType.StoredProcedure)
+        public async Task<IEnumerable<T>> GetAllAsync<T>(string query, DynamicParameters pars = null, CommandType cmdType = CommandType.Text)
         {
             return await db.QueryAsync<T>(query, param: pars, commandType: cmdType);
         }
 
-        public async Task<T> GetAsync<T>(string query, DynamicParameters pars = null, CommandType cmdType = CommandType.StoredProcedure)
+        public async Task<T> GetAsync<T>(string query, DynamicParameters pars = null, CommandType cmdType = CommandType.Text)
         {
             return (await GetAllAsync<T>(query, pars, cmdType)).FirstOrDefault();
         }
