@@ -23,7 +23,7 @@ namespace dapperProj.Data.Repository
             var passId = db.GetAllAsync<long>(query, cmdType: CommandType.Text).Result.FirstOrDefault();
 
 
-            
+
             query = $"INSERT INTO People (name, PassId) VALUES ('{person.Name}', {passId})";
 
             await db.CreateAsync<Person>(query, cmdType: CommandType.Text);
