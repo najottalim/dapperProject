@@ -9,34 +9,38 @@ namespace dapperProj.Data.Repository
 {
     internal class DbRepository
     {
-        private IDapper db = new Dapperr();
+        private readonly IDapper db = new Dapperr();
+
         public async Task CreateAsync(Person person)
         {
             string query = $"INSERT INTO Passports (SerialNumber) VALUES ('{person.passport.SerialNumber}')";
 
             await db.CreateAsync<Passport>(query, cmdType: CommandType.Text);
 
+
             query = $"SELECT id FROM Passports WHERE SerialNumber = '{person.passport.SerialNumber}'";
 
-            var passId = db.GetAllAsync<int>(query, cmdType: CommandType.Text).Result.FirstOrDefault();
+            var passId = db.GetAllAsync<long>(query, cmdType: CommandType.Text).Result.FirstOrDefault();
 
 
+            
             query = $"INSERT INTO People (name, PassId) VALUES ('{person.Name}', {passId})";
 
             await db.CreateAsync<Person>(query, cmdType: CommandType.Text);
         }
 
-        public void DeleteAsync(long PersonId)
+        public Task DeleteAsync(long PersonId)
         {
+            throw new System.NotImplementedException();
+        }
+
+        public Task UpdateAsync(long PersonId, Person person)
+        {
+            throw new System.NotImplementedException();
 
         }
 
-        public void UpdateAsync(long PersonId, Person person)
-        {
-
-        }
-
-        public List<Person> GetAllAsync()
+        public List<Person> GetAll()
         {
             string query = $"SELECT * FROM Passports";
 
@@ -66,7 +70,7 @@ namespace dapperProj.Data.Repository
 
         public Person GetAsync(long PersonId)
         {
-            return GetAllAsync().FirstOrDefault(p => p.Id == PersonId);
+            return GetAll().FirstOrDefault(p => p.Id == PersonId);
         }
 
     }

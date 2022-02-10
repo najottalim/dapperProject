@@ -10,12 +10,12 @@ namespace dapperProj
         {
             DbRepository db = new();
 
-            Person persons = new() { Name = "Me", passport = new Passport() { SerialNumber = "7686654" } };
+            Person persons = new() { Name = "Me", passport = new Passport() { SerialNumber = "7854" } };
 
             db.CreateAsync(persons).Wait();
 
 
-            foreach (var person in db.GetAllAsync())
+            foreach (var person in db.GetAll())
             {
                 Console.WriteLine(person.Name + " " + person.passport.SerialNumber);
             }
